@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Processing App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .button-container {
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin: 10px 0;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Text Processing Application</h1>
+    
+    <textarea id="inputText" placeholder="Enter your text here..."></textarea>
+    
+    <div class="button-container">
+        <button onclick="processText('summarize')">Summarize</button>
+        <button onclick="processText('generate')">Generate</button>
+        <button onclick="processText('sentiment')">Analyze Sentiment</button>
+        <button onclick="processText('translate')">Translate</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        async function processText(operation) {
+            const text = document.getElementById('inputText').value;
+            const resultDiv = document.getElementById('result');
+            
+            if (!text) {
+                alert('Please enter some text first!');
+                return;
+            }
+            
+            resultDiv.innerHTML = 'Processing...';
+            
+            try {
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text, operation })
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = data.result || data.error;
+            } catch (error) {
+                resultDiv.innerHTML = 'Error processing request';
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
